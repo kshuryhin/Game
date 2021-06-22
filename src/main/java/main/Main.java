@@ -1,31 +1,33 @@
 package main;
 
-
-
-import javax.swing.JButton;
-import javax.swing.JFrame;
+import java.awt.Graphics;
 import java.awt.*;
 
+import javax.swing.*;
+
 public class Main {
-
-    public static void main(String[] args) {
-        JFrame frame = new JFrame();
-        frame.setSize(600, 400);
-        frame.setTitle("Let's play!");
+    public Main() {
+        Grid xyz = new Grid();
+        JFrame frame = new JFrame("Grid");
+        frame.setSize(1000, 1000);
+        xyz.setBackground(Color.ORANGE);
+        frame.setLayout(null);
+        xyz.setBounds(50, 50, 800, 800);
+        frame.add(xyz);
         frame.setVisible(true);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setLocationRelativeTo(null);
-        frame.setResizable(true);
-        frame.setLayout(new GridBagLayout());
+//        MyComponent component = new MyComponent();
 
-        JButton myButton = new JButton("Click");
-        JButton myButton2 = new JButton("Click Again");
+//        JLabel label = new JLabel("2");
+//       label.setBounds(1000,2000, 115, 130);
 
-        myButton.setBackground(new Color(112, 95, 32));
-        myButton2.setForeground(Color.blue);
-        frame.add(myButton);
-        frame.add(myButton2);
+//        add(label);
+    }
+
+    public static void main(String[] a) {
+
+
+        new Main();
+
 
     }
 }
-
