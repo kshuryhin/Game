@@ -21,9 +21,9 @@ class Grid extends JPanel {
             }
         }
     }
-    int arr[] = new int[11];
+    int[] arr = new int[11];
 
-    private int size = 4;
+    private final int size = 4;
     int[][] grid = new int[size][size];
 
 
@@ -35,29 +35,20 @@ class Grid extends JPanel {
         int rowHt = height / (size);
         int rowWid = width / (size);
 
-        Font myFont = new Font("Serif", 1, 80);
+        Font myFont = new Font("Serif", 1, 60);
         g.setFont(myFont);
 
         for (i = 0; i <= size; i++) {
             g.drawLine(0, i * rowHt, width, i * rowHt);
         }
-
-
         // draw the columns
         for (i = 0; i <= size; i++) {
             g.drawLine(i * rowWid, 0, i * rowWid, height);
         }
-//        int k = (int)(0.85 * rowHt);
-//        int l = (int)(0.85 * rowWid);
-        int k = 0;
         for (i = 0; i < size; i++) {
             for (int j = 0; j < size; j++) {
                 g.setColor(Color.orange);
-                g.drawString(String.valueOf(arr[k]), j * rowWid, (i + 1) * rowHt);
-                k++;
-                if (k == 11) {
-                    k = 0;
-                }
+                g.drawString(String.valueOf(grid[i][j]), j * rowWid + rowWid/3, (i + 1) * rowHt - rowHt/3);
             }
 
         }
