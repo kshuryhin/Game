@@ -1,12 +1,16 @@
-package main;
+ package main;
 
 import java.awt.*;
-
 import javax.swing.*;
+import java.awt.event.*;
 
-public class Main {
+public class Main implements ActionListener{
+
+    JFrame frame = new JFrame("Grid");
+    Grid gr = new Grid();
+    int count;
+
     public Main() {
-        Grid gr = new Grid();
         gr.setBackground(Color.ORANGE);
         gr.setBounds(50, 50, 800, 800);
 
@@ -16,7 +20,8 @@ public class Main {
         JButton b3 = initButton("Up", 1100, 300, 100, 50);
         JButton b4 = initButton("Down", 1100, 500, 100, 50);
 
-        JFrame frame = new JFrame("Grid");
+        b.addActionListener(this);
+
         frame.setLayout(null);
         frame.setSize(1500, 1000);
         frame.add(b);
@@ -28,6 +33,14 @@ public class Main {
         frame.setVisible(true);
     }
 
+    @Override
+    public void actionPerformed (ActionEvent e) {
+        if(count == 0) {
+            gr.start();
+            count++;
+        }
+    }
+
     public static JButton initButton(String s, int x, int y, int w, int h) {
         JButton b = new JButton(s);
         b.setBounds(x, y, w, h);
@@ -36,6 +49,6 @@ public class Main {
     }
 
     public static void main(String[] a) {
-        new Main();
+       new Main();
     }
 }
