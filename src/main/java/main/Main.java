@@ -9,18 +9,18 @@ public class Main implements ActionListener{
     JFrame frame = new JFrame("Grid");
     Grid gr = new Grid();
     int count;
+    JButton b = initButton("Start game", 1060, 50, 200, 100);
+    JButton b1 = initButton("Left", 1000, 400, 100, 50);
+    JButton b2 = initButton("Right", 1200, 400, 100, 50);
+    JButton b3 = initButton("Up", 1100, 300, 100, 50);
+    JButton b4 = initButton("Down", 1100, 500, 100, 50);
 
     public Main() {
-        gr.setBackground(Color.ORANGE);
+//        gr.setBackground(Color.ORANGE);
         gr.setBounds(50, 50, 800, 800);
 
-        JButton b = initButton("Start game", 1060, 50, 200, 100);
-        JButton b1 = initButton("Left", 1000, 400, 100, 50);
-        JButton b2 = initButton("Right", 1200, 400, 100, 50);
-        JButton b3 = initButton("Up", 1100, 300, 100, 50);
-        JButton b4 = initButton("Down", 1100, 500, 100, 50);
-
         b.addActionListener(this);
+        b1.addActionListener(this);
 
         frame.setLayout(null);
         frame.setSize(1500, 1000);
@@ -35,9 +35,13 @@ public class Main implements ActionListener{
 
     @Override
     public void actionPerformed (ActionEvent e) {
-        if(count == 0) {
-            gr.start();
-            count++;
+        if (e.getSource() == b) {
+            if(count == 0) {
+                gr.start();
+                count++;
+            }
+        } else if (e.getSource() == b1) {
+            gr.moveLeft();
         }
     }
 
