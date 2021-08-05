@@ -2,25 +2,27 @@ package main;
 
 public class MoveLeftTest {
     public static void main(String[] args) {
-//        int[][] matrix = {0, 0, 4, 2};
-        int count = 0;
-        int temp = 0;
+        int[][] matrix = {{0, 2, 4, 0},
+                         { 2, 2, 4, 4},
+                           {0, 0, 2, 4},
+                           {2, 2, 0, 4}
+        };
 
-        for (int i = 0; i < matrix.length; i++) {
-            for (int  j = matrix[i].length - 1; j > 0 ; j--) {
-                if (matrix[i][j] != 0 && matrix[i][j-1] == 0) {
-                    temp = matrix[i][j-1];
-                    matrix[i][j-1] = matrix[i][j];
-                    matrix[i][j] = temp;
-                }
-                    if (matrix[i][j] != 0 && count == 0 && matrix[i][j] == matrix[i][j-1]) {
-                        matrix[i][j-1] = matrix[i][j]*2;
-                        matrix[i][j] = 0;
-                        count++;
-                    }
-            }
-            count = 0;
-        }
+
+//        for (int i = 0; i < 4; i++) {
+//            moveZeroes(matrix[i]);
+//            for (int j = 0; j < 3; j++) {
+//                if (matrix[i][j] == matrix[i][j+1]) {
+//                    matrix[i][j] = matrix[i][j] * 2;
+//                    matrix[i][j+1] = 0;
+//                    j++;
+//                }
+//            }
+//            moveZeroes(matrix[i]);
+//        }
+
+
+
 
         for (int i = 0; i < matrix.length; i++) {
             for (int j = 0; j < matrix[i].length; j++) {
@@ -29,4 +31,20 @@ public class MoveLeftTest {
             System.out.println();
         }
     }
-}
+
+    public static void moveZeroes (int[] matrix) {
+        int pos = 0;
+        for(int i = 0;i < matrix.length;i++) {
+            if(matrix[i] != 0) {
+                if(i != pos) {
+                    matrix[pos] = matrix[i];
+                    matrix[i] = 0;
+                }
+                pos++;
+            }
+        }
+        }
+
+
+    }
+

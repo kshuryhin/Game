@@ -1,6 +1,9 @@
 package main;
 
+
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Random;
 import javax.swing.*;
 
@@ -89,49 +92,85 @@ class Grid extends JPanel {
     }
 
     public void moveLeft() {
-        int temp;
-        for (int i = 0; i < grid.length; i++) {
-            for (int j = grid[i].length - 1; j > 0; j--) {
-                if (grid[i][j] != 0 && grid[i][j - 1] == 0) {
-                    temp = grid[i][j - 1];
-                    grid[i][j - 1] = grid[i][j];
-                    grid[i][j] = temp;
-                    isMoved = true;
-                }
-                if (grid[i][j] != 0 && grid[i][j] == grid[i][j - 1]) {
-                    grid[i][j] = 0;
-                    grid[i][j - 1] = grid[i][j - 1] * 2;
-                    isMoved = true;
-                }
-            }
+
+        for (int i = 0; i < 4; i++) {
+            moveZeroes(grid[i]);
+            sumElements(grid[i]);
+            moveZeroes(grid[i]);
         }
     }
 
     public void moveUp () {
-        int temp = 0;
-        for (int j = 0; j < grid[0].length ; j++) {
-            for (int i = grid.length-1; i > 0; i--) {
-                if (grid[i][j] != 0 && grid[i-1][j] == 0) {
-                    temp = grid[i][j];
-                    grid[i][j] = grid[i-1][j];
-                    grid[i-1][j] = temp;
-                    isMoved = true;
-                }
+        int[] invert = new int[4];
 
-                if (grid[i][j] != 0 && grid[i][j] == grid[i-1][j]) {
-                    grid[i][j] = 0;
-                    grid[i-1][j] = grid[i-1][j]*2;
-                    isMoved = true;
-                }
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 4; j++) {
+                invert[j] = grid[j][i];
+            }
+
+            moveZeroes(invert);
+            sumElements(invert);
+            moveZeroes(invert);
+
+            for (int j = 0; j < 4; j++) {
+                grid[j][i] = invert[j];
+            }
+        }
+    }
+    public void moveRight () {
+        int[] invert = new int[4];
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 4; j++) {
+                invert[j] = grid[i][invert.length - 1 - j];
+            }
+            moveZeroes(invert);
+            sumElements(invert);
+            moveZeroes(invert);
+            for (int j = 0; j < 4; j++) {
+                grid[i][j] = invert[invert.length - 1 - j];
             }
         }
     }
 
-    public void moveRight () {
+    public void moveDown () {
+        int[] invert = new int[4];
 
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 4; j++) {
+                invert[j] = grid[invert.length - 1 - j][i];
+            }
+
+            moveZeroes(invert);
+            sumElements(invert);
+            moveZeroes(invert);
+
+            for (int j = 0; j < 4; j++) {
+                grid[j][i] = invert[invert.length - 1 - j];
+            }
+        }
     }
 
-    public void moveDown () {
+    public void moveZeroes (int[] matrix) {
+        int pos = 0;
+        for(int i = 0;i < matrix.length;i++) {
+            if(matrix[i] != 0) {
+                if(i != pos) {
+                    matrix[pos] = matrix[i];
+                    matrix[i] = 0;
+                    isMoved = true;
+                }
+                pos++;
+            }
+        }
+    }
 
+    public void sumElements (int[] mass) {
+        for (int i = 0; i < mass.length - 1; i++) {
+            if (mass[i] == mass[i+1]) {
+                mass[i] = mass[i+1]*2;
+                mass[i+1] = 0;
+                i++;
+            }
+        }
     }
 }
