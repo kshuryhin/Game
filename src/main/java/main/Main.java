@@ -15,6 +15,8 @@ public class Main {
     JButton up = initButton("Up", 1100, 300, 100, 50);
     JButton down = initButton("Down", 1100, 500, 100, 50);
 
+    JLabel score = initLabel(String.valueOf(gr.score()), 1100, 650, 100, 100);
+
     public Main() {
         gr.setBounds(50, 50, 800, 800);
         click();
@@ -32,39 +34,93 @@ public class Main {
             gr.repaint();
             gr.addNewNumbers(gr.isMoved);
             gr.repaint();
+            updateScore();
+            endGame();
         });
         frame.add(left);
 
         start.addActionListener(e ->{
+            updateScore();
             gr.start();
             gr.repaint();
+            updateScore();
+            endGame();
         });
         frame.add(start);
 
         up.addActionListener(e->{
+            updateScore();
             gr.moveUp();
             gr.repaint();
             gr.addNewNumbers(gr.isMoved);
             gr.repaint();
+            updateScore();
+            endGame();
         });
         frame.add(up);
 
         right.addActionListener(e->{
+            updateScore();
             gr.moveRight();
             gr.repaint();
             gr.addNewNumbers(gr.isMoved);
             gr.repaint();
+            updateScore();
+            endGame();
         });
         frame.add(right);
 
         down.addActionListener(e->{
+            updateScore();
             gr.moveDown();
             gr.repaint();
-            gr.addNewNumbers(gr.isMoved)
-            ;
+            gr.addNewNumbers(gr.isMoved);
             gr.repaint();
+            updateScore();
+            endGame();
         });
         frame.add(down);
+    }
+
+    public  void updateScore () {
+        score.repaint();
+        score.setText(String.valueOf(gr.score()));
+        frame.add(score);
+    }
+
+    public void endGame () {
+        if (gr.score() == 2048) {
+            int input = JOptionPane.showOptionDialog(null, "You win! If you want to " +
+                            "play again" +
+                            " press OK", "Win",
+                    JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE,
+                    null, null, null);
+
+            if(input == JOptionPane.OK_OPTION)
+            {
+                gr.start();
+            }
+            if (input == JOptionPane.OK_CANCEL_OPTION) {
+                System.exit(1);
+            }
+        }
+
+        if (!gr.containsNull()) {
+            int input = JOptionPane.showOptionDialog(null, "You loose! If you want to " +
+                            "play again" +
+                            " press OK", "Loose",
+                    JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE,
+                    null, null, null);
+
+            if(input == JOptionPane.OK_OPTION)
+
+            {
+                gr.start();
+            }
+            if (input == JOptionPane.OK_CANCEL_OPTION) {
+                System.exit(1);
+            }
+        }
     }
 
     public static JButton initButton(String s, int x, int y, int w, int h) {
@@ -72,6 +128,15 @@ public class Main {
         b.setBounds(x, y, w, h);
         b.setBackground(Color.WHITE);
         return b;
+    }
+
+    public static JLabel initLabel (String s, int x, int y, int w, int h) {
+        JLabel label = new JLabel(s, SwingConstants.CENTER);
+        label.setFont(new Font("Serif", Font.BOLD, 14));
+        label.setBounds(x, y, w, h);
+        label.setOpaque( true );
+        label.setBackground(Color.ORANGE);
+        return label;
     }
 
     public static void main(String[] a) {

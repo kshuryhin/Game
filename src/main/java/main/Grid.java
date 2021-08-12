@@ -2,8 +2,6 @@ package main;
 
 
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Random;
 import javax.swing.*;
 
@@ -55,19 +53,10 @@ class Grid extends JPanel {
         return String.valueOf(x);
     }
 
-    public void addNewNumbers (boolean isMoved) {
+    public void addNewNumbers(boolean isMoved) {
         int x;
         int y;
-        boolean containsNull = false;
-        for (int i = 0; i < grid.length; i++) {
-            for (int j = 0; j < grid[i].length; j++) {
-                if (grid[i][j] != 0) {
-                    containsNull = true;
-                    break;
-                }
-            }
-        }
-        if (containsNull && isMoved) {
+        if (containsNull() && isMoved) {
             do {
                 x = rand.nextInt(4);
                 y = rand.nextInt(4);
@@ -77,7 +66,26 @@ class Grid extends JPanel {
         this.isMoved = false;
     }
 
+    public boolean containsNull() {
+        boolean answer = false;
+
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < size; j++) {
+                if (grid[i][j] == 0) {
+                    answer = true;
+                    break;
+                }
+            }
+        }
+        return answer;
+    }
+
     public void start() {
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < size; j++) {
+                grid[i][j] = 0;
+            }
+        }
         int i = rand.nextInt(4);
         int j = rand.nextInt(4);
         int x;
@@ -100,7 +108,7 @@ class Grid extends JPanel {
         }
     }
 
-    public void moveUp () {
+    public void moveUp() {
         int[] invert = new int[4];
 
         for (int i = 0; i < 4; i++) {
@@ -117,7 +125,8 @@ class Grid extends JPanel {
             }
         }
     }
-    public void moveRight () {
+
+    public void moveRight() {
         int[] invert = new int[4];
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 4; j++) {
@@ -132,7 +141,7 @@ class Grid extends JPanel {
         }
     }
 
-    public void moveDown () {
+    public void moveDown() {
         int[] invert = new int[4];
 
         for (int i = 0; i < 4; i++) {
@@ -150,11 +159,11 @@ class Grid extends JPanel {
         }
     }
 
-    public void moveZeroes (int[] matrix) {
+    public void moveZeroes(int[] matrix) {
         int pos = 0;
-        for(int i = 0;i < matrix.length;i++) {
-            if(matrix[i] != 0) {
-                if(i != pos) {
+        for (int i = 0; i < matrix.length; i++) {
+            if (matrix[i] != 0) {
+                if (i != pos) {
                     matrix[pos] = matrix[i];
                     matrix[i] = 0;
                     isMoved = true;
@@ -164,13 +173,35 @@ class Grid extends JPanel {
         }
     }
 
-    public void sumElements (int[] mass) {
+    public void sumElements(int[] mass) {
+
         for (int i = 0; i < mass.length - 1; i++) {
-            if (mass[i] == mass[i+1]) {
-                mass[i] = mass[i+1]*2;
-                mass[i+1] = 0;
+            if (mass[i] == mass[i + 1] && mass[i] != 0) {
+                mass[i] = mass[i + 1] * 2;
+                mass[i + 1] = 0;
                 i++;
+                isMoved = true;
             }
+        }
+    }
+
+
+    public int score() {
+        int maxValue = grid[0][0];
+
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < size; j++) {
+                if (grid[i][j] > maxValue) {
+                    maxValue = grid[i][j];
+                }
+            }
+        }
+        return maxValue;
+    }
+
+    public void add(boolean x, boolean y) {
+        if (x || y) {
+            addNewNumbers(true);
         }
     }
 }
