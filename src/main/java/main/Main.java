@@ -32,7 +32,7 @@ public class Main {
         {
             gr.moveLeft();
             gr.repaint();
-            gr.addNewNumbers(gr.isMoved);
+            gr.addNewNumbers();
             gr.repaint();
             updateScore();
             endGame();
@@ -52,7 +52,7 @@ public class Main {
             updateScore();
             gr.moveUp();
             gr.repaint();
-            gr.addNewNumbers(gr.isMoved);
+            gr.addNewNumbers();
             gr.repaint();
             updateScore();
             endGame();
@@ -63,7 +63,7 @@ public class Main {
             updateScore();
             gr.moveRight();
             gr.repaint();
-            gr.addNewNumbers(gr.isMoved);
+            gr.addNewNumbers();
             gr.repaint();
             updateScore();
             endGame();
@@ -74,7 +74,7 @@ public class Main {
             updateScore();
             gr.moveDown();
             gr.repaint();
-            gr.addNewNumbers(gr.isMoved);
+            gr.addNewNumbers();
             gr.repaint();
             updateScore();
             endGame();

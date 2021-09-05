@@ -10,7 +10,6 @@ class Grid extends JPanel {
     private final int size = 4;
     private int[][] grid = new int[size][size];
     private Random rand = new Random(System.currentTimeMillis());
-    public boolean isMoved = false;
 
     public Grid() {
         int k = 0;
@@ -53,17 +52,17 @@ class Grid extends JPanel {
         return String.valueOf(x);
     }
 
-    public void addNewNumbers(boolean isMoved) {
+    public void addNewNumbers() {
         int x;
         int y;
-        if (containsNull() && isMoved) {
+        if (containsNull()) {
             do {
                 x = rand.nextInt(4);
                 y = rand.nextInt(4);
             } while (grid[x][y] != 0);
             grid[x][y] = arr[rand.nextInt(2)];
         }
-        this.isMoved = false;
+
     }
 
     public boolean containsNull() {
@@ -166,7 +165,7 @@ class Grid extends JPanel {
                 if (i != pos) {
                     matrix[pos] = matrix[i];
                     matrix[i] = 0;
-                    isMoved = true;
+
                 }
                 pos++;
             }
@@ -180,7 +179,6 @@ class Grid extends JPanel {
                 mass[i] = mass[i + 1] * 2;
                 mass[i + 1] = 0;
                 i++;
-                isMoved = true;
             }
         }
     }
@@ -201,7 +199,7 @@ class Grid extends JPanel {
 
     public void add(boolean x, boolean y) {
         if (x || y) {
-            addNewNumbers(true);
+            addNewNumbers();
         }
     }
 }
