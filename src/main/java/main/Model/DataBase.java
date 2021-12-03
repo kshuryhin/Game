@@ -3,7 +3,7 @@ package main.Model;
 import java.sql.*;
 
 public class DataBase {
-    private static final String url = "jdbc:mysql://localhost:8889/store";
+    private static final String url = "jdbc:mysql://localhost:8889/2048";
     private static final String user = "root";
     private static final String password = "root";
 
@@ -26,30 +26,21 @@ public class DataBase {
         return connection;
     }
 
-    public static void insertData(int[] arr, int i){
-        String query = "UPDATE store.matrix\n" +
-                "SET col1 = " + arr[0] + ", col2 = " + arr[1] + ", col3 = " + arr[2] + ", col4 = " + arr[3] + " WHERE row = " + i + ";";
-
-        try{
-            Connection connection = DataBase.getConnection();
-            PreparedStatement ps = connection.prepareStatement(query);
-            ps.executeUpdate();
-            connection.close();
-            ps.close();
-        }catch (SQLException ex){
-            ex.printStackTrace();
-        }
+    public static void insertSerializable(int size, byte[] arr) throws SQLException {
+        Connection connection = getConnection();
+        PreparedStatement ps = connection.prepareStatement("INSERT INTO save_game(size, grid) VALUES(?,?)" +
+                "ON DUPLICATE KEY UPDATE grid=? ");
+        ps.setInt(1, size);
+        ps.setBytes(2, arr);
+        ps.setBytes(3, arr);
+        ps.executeUpdate();
     }
 
-    public static ResultSet getData(){
-        ResultSet rs = null;
-        try{
-            Connection connection = DataBase.getConnection();
-            PreparedStatement ps = connection.prepareStatement("SELECT col1, col2, col3, col4 FROM matrix");
-            rs = ps.executeQuery();
-        }catch (SQLException ex){
-            ex.printStackTrace();
-        }
+    public static ResultSet getSerializableData(int size) throws SQLException {
+        Connection connection = getConnection();
+        PreparedStatement ps = connection.prepareStatement("SELECT grid FROM save_game WHERE size=?");
+        ps.setInt(1,size);
+        rs = ps.executeQuery();
         return rs;
     }
 

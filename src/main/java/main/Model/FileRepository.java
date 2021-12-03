@@ -4,7 +4,6 @@ import java.io.*;
 import java.util.Scanner;
 
 public class FileRepository implements Repository{
-    File fload = new File("load");
     private int[][] grid;
     private int size;
 
@@ -14,40 +13,26 @@ public class FileRepository implements Repository{
     }
 
     @Override
-    public void save(int[][] grid) {
-        PrintWriter wr = null;
-        try {
-            wr = new PrintWriter(fload);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-        for (int i = 0; i < grid.length; i++) {
-            for (int j = 0; j < grid.length; j++) {
-                wr.print(grid[i][j]);
-                wr.print("\t");
-            }
-            wr.print("\n");
-        }
-
-        wr.close();
+    public void save(int[][] grid) throws IOException {
+        FileOutputStream fileOutputStream = new FileOutputStream("test.txt");
+        ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
+        objectOutputStream.writeObject(grid);
+        objectOutputStream.flush();
+        objectOutputStream.close();
     }
 
     @Override
-    public void load() {
-        try {
-            FileReader fr = new FileReader("load");
-            Scanner scanner = new Scanner(fr);
-
-
-            for (int i = 0; i < 4; i++) {
-                for (int j = 0; j < 4; j++) {
-                    grid[i][j] = scanner.nextInt();
-                }
+    public void load() throws IOException, ClassNotFoundException {
+        FileInputStream fileInputStream = new FileInputStream("test.txt");
+        ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
+        int[][] newGrid = new int[size][size];
+        newGrid = (int[][]) objectInputStream.readObject();
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < size; j++) {
+                grid[i][j] = newGrid[i][j];
             }
-            fr.close();
-        }catch (IOException ex){
-            ex.printStackTrace();
         }
+        objectInputStream.close();
 
     }
 }

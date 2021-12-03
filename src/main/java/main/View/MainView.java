@@ -90,17 +90,22 @@ public class MainView extends JFrame {
         add(down);
 
         save.addActionListener(e->{
-            controller.saveGame();
+            try {
+                controller.saveGame();
+            } catch (IOException | ClassNotFoundException | SQLException ex) {
+                ex.printStackTrace();
+            }
         });
         add(save);
 
         load.addActionListener(e -> {
             try {
                 controller.uploadGame();
-            } catch (IOException | SQLException ioException) {
+            } catch (IOException | SQLException | ClassNotFoundException ioException) {
                 ioException.printStackTrace();
+            }finally {
+                gridView.repaint();
             }
-            gridView.repaint();
         });
         add(load);
     }

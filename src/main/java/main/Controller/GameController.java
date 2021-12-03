@@ -2,6 +2,7 @@ package main.Controller;
 
 import main.Model.FileRepository;
 import main.Model.Grid;
+import main.Model.MySQLRepository;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -161,18 +162,22 @@ public class GameController {
         }
     }
 
-    public void saveGame(){
-//        MySQLRepository dbRepo = new MySQLRepository(matrix);
-//        dbRepo.save(matrix);
+    public void saveGame() throws IOException, ClassNotFoundException, SQLException {
+        MySQLRepository dbRepo = new MySQLRepository(matrix);
+        dbRepo.save(matrix);
 
-        FileRepository fileRepo = new FileRepository(matrix);
-        fileRepo.save(matrix);
+//        FileRepository fileRepo = new FileRepository(matrix);
+////        fileRepo.save(matrix);
+
     }
 
-    public void uploadGame() throws IOException, SQLException {
-//        MySQLRepository dbRepo = new MySQLRepository(matrix);
-//        dbRepo.load();
-        FileRepository fileRepo = new FileRepository(matrix);
-        fileRepo.load();
+    public void uploadGame() throws IOException, SQLException, ClassNotFoundException {
+        MySQLRepository dbRepo = new MySQLRepository(matrix);
+        dbRepo.load();
+
+
+//        FileRepository fileRepo = new FileRepository(matrix);
+////        fileRepo.load();
+
     }
 }
