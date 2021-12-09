@@ -1,21 +1,22 @@
 package main.Controller;
 
-import main.Model.FileRepository;
-import main.Model.Grid;
-import main.Model.MySQLRepository;
+import main.Model.*;
 
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Random;
 
 public class GameController {
-    private int[][] matrix;
+    private Grid grid;
     private int size;
     private Random rand = new Random(System.currentTimeMillis());
+    Score score;
 
-    public GameController(Grid grid){
-        this.matrix = grid.getGrid();
-        this.size = matrix.length;
+    //хранить не matrix, а Grid
+    public GameController(Grid grid, Score score){
+        this.grid = grid;
+        this.size = grid.getSize();
+        this.score = score;
     }
 
     public static String zeroCheck(int x) {
@@ -25,15 +26,19 @@ public class GameController {
         return String.valueOf(x);
     }
 
+    //сделать score суммой всех элементов. Сохранение score в базу данных
     public int score() {
-
-        int maxValue = matrix[0][0];
-
+        int maxValue = 0;
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < size; j++) {
-                if (matrix[i][j] > maxValue) {
-                    maxValue = matrix[i][j];
-                }
+                    maxValue += grid.getGrid()[i][j];
+            }
+        }
+        if (score.checkScore(maxValue) != 0) {
+            try {
+                DataBase.updateScore(score);
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
         }
         return maxValue;
@@ -42,10 +47,11 @@ public class GameController {
     public void moveLeft() {
 
         for (int i = 0; i < 4; i++) {
-            moveZeroes(matrix[i]);
-            sumElements(matrix[i]);
-            moveZeroes(matrix[i]);
+            moveZeroes(grid.getGrid()[i]);
+            sumElements(grid.getGrid()[i]);
+            moveZeroes(grid.getGrid()[i]);
         }
+        addNewNumbers();
     }
 
     public void moveZeroes(int[] arr) {
@@ -81,8 +87,8 @@ public class GameController {
             do {
                 x = rand.nextInt(4);
                 y = rand.nextInt(4);
-            } while (matrix[x][y] != 0);
-            matrix[x][y] = arr1[rand.nextInt(2)];
+            } while (grid.getGrid()[x][y] != 0);
+            grid.getGrid()[x][y] = arr1[rand.nextInt(2)];
         }
 
     }
@@ -92,7 +98,7 @@ public class GameController {
 
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < size; j++) {
-                if (matrix[i][j] == 0) {
+                if (grid.getGrid()[i][j] == 0) {
                     answer = true;
                     break;
                 }
@@ -104,19 +110,20 @@ public class GameController {
     public void start() {
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < size; j++) {
-                matrix[i][j] = 0;
+                grid.getGrid()[i][j] = 0;
             }
         }
         addNewNumbers();
         addNewNumbers();
     }
 
+    //создать метода для вызова трех
     public void moveUp() {
         int[] invert = new int[4];
 
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 4; j++) {
-                invert[j] = matrix[j][i];
+                invert[j] = grid.getGrid()[j][i];
             }
 
             moveZeroes(invert);
@@ -124,24 +131,26 @@ public class GameController {
             moveZeroes(invert);
 
             for (int j = 0; j < 4; j++) {
-                matrix[j][i] = invert[j];
+                grid.getGrid()[j][i] = invert[j];
             }
         }
+        addNewNumbers();
     }
 
     public void moveRight() {
         int[] invert = new int[4];
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 4; j++) {
-                invert[j] = matrix[i][invert.length - 1 - j];
+                invert[j] = grid.getGrid()[i][invert.length - 1 - j];
             }
             moveZeroes(invert);
             sumElements(invert);
             moveZeroes(invert);
             for (int j = 0; j < 4; j++) {
-                matrix[i][j] = invert[invert.length - 1 - j];
+                grid.getGrid()[i][j] = invert[invert.length - 1 - j];
             }
         }
+        addNewNumbers();
     }
 
     public void moveDown() {
@@ -149,7 +158,7 @@ public class GameController {
 
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 4; j++) {
-                invert[j] = matrix[invert.length - 1 - j][i];
+                invert[j] = grid.getGrid()[invert.length - 1 - j][i];
             }
 
             moveZeroes(invert);
@@ -157,27 +166,19 @@ public class GameController {
             moveZeroes(invert);
 
             for (int j = 0; j < 4; j++) {
-                matrix[j][i] = invert[invert.length - 1 - j];
+                grid.getGrid()[j][i] = invert[invert.length - 1 - j];
             }
         }
+        addNewNumbers();
     }
 
     public void saveGame() throws IOException, ClassNotFoundException, SQLException {
-        MySQLRepository dbRepo = new MySQLRepository(matrix);
-        dbRepo.save(matrix);
-
-//        FileRepository fileRepo = new FileRepository(matrix);
-////        fileRepo.save(matrix);
-
+        MySQLRepository dbRepo = new MySQLRepository();
+        dbRepo.save(grid);
     }
 
     public void uploadGame() throws IOException, SQLException, ClassNotFoundException {
-        MySQLRepository dbRepo = new MySQLRepository(matrix);
-        dbRepo.load();
-
-
-//        FileRepository fileRepo = new FileRepository(matrix);
-////        fileRepo.load();
-
+        MySQLRepository dbRepo = new MySQLRepository();
+        dbRepo.load(grid);
     }
 }

@@ -4,9 +4,10 @@ import main.Model.Grid;
 import main.View.MainView;
 
 public class Main {
+    private final static int size = 4;
     public static void main(String[] args) {
-        Grid game = new Grid(4);
-        MainView mainView = new MainView(new Grid(4));
-//        System.out.println(game.getSize());
+        Grid game = new Grid(size);
+        MainView mainView = new MainView(game);
+        mainView.setVisible(true);
     }
 }

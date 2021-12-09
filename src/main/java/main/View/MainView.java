@@ -1,7 +1,9 @@
 package main.View;
 
 import main.Controller.GameController;
+import main.Model.DataBase;
 import main.Model.Grid;
+import main.Model.Score;
 
 import javax.swing.*;
 import java.awt.*;
@@ -12,6 +14,7 @@ public class MainView extends JFrame {
     private Grid grid;
     GridView gridView;
     GameController controller;
+    Score score;
     JButton start;
     JButton left;
     JButton right;
@@ -20,27 +23,32 @@ public class MainView extends JFrame {
     JButton save;
     JButton load;
 
-    JLabel score;
+    JLabel TOP1;
+    JLabel TOP2;
+    JLabel TOP3;
+
 
     public MainView(Grid grid){
+        score = new Score();
         this.grid = grid;
         gridView = new GridView(grid);
-        controller = new GameController(grid);
-        createElements();
+        controller = new GameController(grid, score);
+        try {
+            createElements();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         gridView.setBounds(50, 50, 800, 800);
-        click();
+        createActionListeners();
         setLayout(null);
         setSize(1500, 1000);
         add(gridView);
-        setVisible(true);
     }
 
-    private void click(){
+    private void createActionListeners(){
         left.addActionListener(e ->
         {
             controller.moveLeft();
-            gridView.repaint();
-            controller.addNewNumbers();
             gridView.repaint();
             updateScore();
             endGame();
@@ -55,12 +63,11 @@ public class MainView extends JFrame {
             endGame();
         });
         add(start);
+        updateScore();
 
         up.addActionListener(e->{
             updateScore();
             controller.moveUp();
-            gridView.repaint();
-            controller.addNewNumbers();
             gridView.repaint();
             updateScore();
             endGame();
@@ -71,8 +78,6 @@ public class MainView extends JFrame {
             updateScore();
             controller.moveRight();
             gridView.repaint();
-            controller.addNewNumbers();
-            gridView.repaint();
             updateScore();
             endGame();
         });
@@ -81,8 +86,6 @@ public class MainView extends JFrame {
         down.addActionListener(e->{
             updateScore();
             controller.moveDown();
-            gridView.repaint();
-            controller.addNewNumbers();
             gridView.repaint();
             updateScore();
             endGame();
@@ -112,16 +115,19 @@ public class MainView extends JFrame {
 
 
 
-    private void createElements(){
+    private void createElements() throws SQLException {
         start = initButton("Start game", 1060, 50, 200, 100);
         left = initButton("Left", 1000, 400, 100, 50);
         right = initButton("Right", 1200, 400, 100, 50);
         up = initButton("Up", 1100, 300, 100, 50);
         down = initButton("Down", 1100, 500, 100, 50);
-         save = initButton("Save", 1200, 600, 100, 50);
-         load = initButton("Load", 1200, 700, 100, 50);
+         save = initButton("Save", 1100, 600, 100, 50);
+         load = initButton("Load", 1200, 600, 100, 50);
 
-        score = initLabel(String.valueOf(controller.score()), 1100, 650, 100, 100);
+        TOP1 = initLabel(String.valueOf(DataBase.getScore().get(0)), 900, 650, 100, 100);
+        TOP2 = initLabel(String.valueOf(DataBase.getScore().get(1)), 1050, 650, 100, 100);
+        TOP3 = initLabel(String.valueOf(DataBase.getScore().get(2)), 1200, 650, 100, 100);
+
     }
 
     private JButton initButton(String s, int x, int y, int w, int h) {
@@ -141,9 +147,30 @@ public class MainView extends JFrame {
     }
 
     public void updateScore () {
-        score.repaint();
-        score.setText(String.valueOf(controller.score()));
-        add(score);
+        try {
+            score.setTOP1(DataBase.getScore().get(0));
+            score.setTOP2(DataBase.getScore().get(1));
+            score.setTOP3(DataBase.getScore().get(2));
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        controller.score();
+        try {
+            TOP1.setText(String.valueOf(DataBase.getScore().get(0)));
+            TOP2.setText(String.valueOf(DataBase.getScore().get(1)));
+            TOP3.setText(String.valueOf(DataBase.getScore().get(2)));
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        TOP1.repaint();
+        TOP2.repaint();
+        TOP3.repaint();
+
+        add(TOP1);
+        add(TOP2);
+        add(TOP3);
     }
 
     public void endGame () {
