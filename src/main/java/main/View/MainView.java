@@ -14,7 +14,6 @@ public class MainView extends JFrame {
     private Grid grid;
     GridView gridView;
     GameController controller;
-    Score score;
     JButton start;
     JButton left;
     JButton right;
@@ -23,16 +22,15 @@ public class MainView extends JFrame {
     JButton save;
     JButton load;
 
-    JLabel TOP1;
-    JLabel TOP2;
-    JLabel TOP3;
+    JLabel score;
+    JLabel maxScore;
+
 
 
     public MainView(Grid grid){
-        score = new Score();
         this.grid = grid;
         gridView = new GridView(grid);
-        controller = new GameController(grid, score);
+        controller = new GameController(grid);
         try {
             createElements();
         } catch (SQLException e) {
@@ -56,10 +54,14 @@ public class MainView extends JFrame {
         add(left);
 
         start.addActionListener(e ->{
-            updateScore();
-            controller.start();
             gridView.repaint();
+            controller.start();
             updateScore();
+            try {
+                updateRecord();
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
             endGame();
         });
         add(start);
@@ -95,11 +97,13 @@ public class MainView extends JFrame {
         save.addActionListener(e->{
             try {
                 controller.saveGame();
+                updateRecord();
             } catch (IOException | ClassNotFoundException | SQLException ex) {
                 ex.printStackTrace();
             }
         });
         add(save);
+
 
         load.addActionListener(e -> {
             try {
@@ -124,9 +128,8 @@ public class MainView extends JFrame {
          save = initButton("Save", 1100, 600, 100, 50);
          load = initButton("Load", 1200, 600, 100, 50);
 
-        TOP1 = initLabel(String.valueOf(DataBase.getScore().get(0)), 900, 650, 100, 100);
-        TOP2 = initLabel(String.valueOf(DataBase.getScore().get(1)), 1050, 650, 100, 100);
-        TOP3 = initLabel(String.valueOf(DataBase.getScore().get(2)), 1200, 650, 100, 100);
+        score = initLabel(String.valueOf(controller.score()), 900, 650, 100, 100);
+        maxScore = initLabel(String.valueOf(controller.getRecord()), 1100, 650, 100, 100);
 
     }
 
@@ -147,30 +150,16 @@ public class MainView extends JFrame {
     }
 
     public void updateScore () {
-        try {
-            score.setTOP1(DataBase.getScore().get(0));
-            score.setTOP2(DataBase.getScore().get(1));
-            score.setTOP3(DataBase.getScore().get(2));
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+       score.setText(String.valueOf(controller.score()));
+        add(score);
+        score.repaint();
+    }
 
-        controller.score();
-        try {
-            TOP1.setText(String.valueOf(DataBase.getScore().get(0)));
-            TOP2.setText(String.valueOf(DataBase.getScore().get(1)));
-            TOP3.setText(String.valueOf(DataBase.getScore().get(2)));
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+    public void updateRecord() throws SQLException {
+        maxScore.setText(String.valueOf(controller.getRecord()));
+        add(maxScore);
+        maxScore.repaint();
 
-        TOP1.repaint();
-        TOP2.repaint();
-        TOP3.repaint();
-
-        add(TOP1);
-        add(TOP2);
-        add(TOP3);
     }
 
     public void endGame () {

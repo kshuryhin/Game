@@ -4,6 +4,7 @@ import main.Model.*;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.PriorityQueue;
 import java.util.Random;
 
 public class GameController {
@@ -13,7 +14,7 @@ public class GameController {
     Score score;
 
     //хранить не matrix, а Grid
-    public GameController(Grid grid, Score score){
+    public GameController(Grid grid){
         this.grid = grid;
         this.size = grid.getSize();
         this.score = score;
@@ -34,14 +35,18 @@ public class GameController {
                     maxValue += grid.getGrid()[i][j];
             }
         }
-        if (score.checkScore(maxValue) != 0) {
-            try {
-                DataBase.updateScore(score);
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
         return maxValue;
+    }
+
+    public void saveScore() throws SQLException {
+        int score = score();
+        PriorityQueue<Integer> queue = DataBase.getScore();
+        queue.add(score);
+        DataBase.updateScore(queue);
+    }
+
+    public int getRecord() throws SQLException {
+        return DataBase.getScore().peek();
     }
 
     public void moveLeft() {
@@ -175,6 +180,7 @@ public class GameController {
     public void saveGame() throws IOException, ClassNotFoundException, SQLException {
         MySQLRepository dbRepo = new MySQLRepository();
         dbRepo.save(grid);
+        saveScore();
     }
 
     public void uploadGame() throws IOException, SQLException, ClassNotFoundException {

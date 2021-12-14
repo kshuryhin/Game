@@ -2,7 +2,9 @@ package main.Model;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.PriorityQueue;
 
 public class DataBase {
     private static final String url = "jdbc:mysql://localhost:8889/2048";
@@ -51,31 +53,32 @@ public class DataBase {
 
     }
 
-    public static void updateScore(Score score) throws SQLException {
+    public static void updateScore(PriorityQueue<Integer> queue) throws SQLException {
         try(Connection connection = getConnection()){
-            PreparedStatement ps = connection.prepareStatement("UPDATE score SET score=? WHERE id=1");
-            PreparedStatement ps2 = connection.prepareStatement("UPDATE score SET score=? WHERE id=2");
-            PreparedStatement ps3 = connection.prepareStatement("UPDATE score SET score=? WHERE id=3");
-            List<PreparedStatement> preparedStatementList = new ArrayList<>();
-            ps.setInt(1, score.getTOP1());
-            ps2.setInt(1, score.getTOP2());
-            ps3.setInt(1, score.getTOP3());
-            ps.executeUpdate();
-            ps2.executeUpdate();
-            ps3.executeUpdate();
+            PreparedStatement updateFirst = connection.prepareStatement("UPDATE score SET score=? WHERE id=1");
+            PreparedStatement updateSecond = connection.prepareStatement("UPDATE score SET score=? WHERE id=2");
+            PreparedStatement updateThird = connection.prepareStatement("UPDATE score SET score=? WHERE id=3");
+
+            updateFirst.setInt(1, queue.poll());
+            updateSecond.setInt(1, queue.poll());
+            updateThird.setInt(1, queue.poll());
+
+            updateFirst.executeUpdate();
+            updateSecond.executeUpdate();
+            updateThird.executeUpdate();
         }
 
     }
 
-    public static List<Integer> getScore() throws SQLException {
+    public static PriorityQueue<Integer> getScore() throws SQLException {
         try(Connection connection = getConnection()){
             PreparedStatement ps = connection.prepareStatement("SELECT score FROM score");
             ResultSet rs = ps.executeQuery();
-            ArrayList<Integer> scoreList = new ArrayList<>();
+            PriorityQueue<Integer> queue = new PriorityQueue<>(Collections.reverseOrder());
             while (rs.next()){
-                scoreList.add(rs.getInt("score"));
+                queue.add(rs.getInt("score"));
             }
-            return scoreList;
+            return queue;
         }
     }
 
